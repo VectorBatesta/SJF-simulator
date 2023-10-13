@@ -5,10 +5,10 @@
 
 
 
-void printaProcessos(int maxProcessos, int tabela[20][2]){
-    printf("\n\n\t\t\tChegada\t\tTempo\n");
+void printaProcessos(int maxProcessos, int tabela[20][3]){
+    printf("\n\n\t\t\tChegada\t\tTempo\t\tT. de Finalizacao\n");
     for(int i = 0; i < maxProcessos; i++){
-        printf("Processo %i:\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1]);
+        printf("Processo %i:\t\t%i\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1], tabela[i][2]);
     }
 }
 
@@ -28,7 +28,8 @@ int main() {
     char linha[256]; 
     char *token;
     int maxProcessos = 0;
-    int tabela[20][2];
+    int tabela[20][3];
+
 
 
     // Lê cada linha do arquivo CSV
@@ -46,6 +47,14 @@ int main() {
     //[i][] : processo
     //[] [1]: tempo
     //[] [0]: chegada
+    //[] [2]: tempo de finalização
+
+
+    //inicializa tempo de finalização em zero
+    for (int i = 0; i < maxProcessos; i++){
+        tabela[i][2] = 0;
+    }
+
 
 
 
@@ -73,6 +82,11 @@ int main() {
     int processoSelecionado = 0;
     //percorre tabela começando do tempo zero até o tempo máximo (soma de todos os tempos)
     for(int tempoAtual = 0; tempoAtual < tempoMax; tempoAtual++){
+        //tempo de finalizaçao++ para cada processo iniciado e com tempo maior q zero
+        for (int j = 1; j <= stackPointer; j++){
+            tabela[j][2]++;
+        }
+
         //imprime stack
         printf("stack: ");
         for(int i = 0; i <= stackPointer; i++){
@@ -85,6 +99,7 @@ int main() {
         if (tabela[processoSelecionado][1] > 0){
             printf("%i ", processoSelecionado);
             tabela[processoSelecionado][1]--;
+            tabela[processoSelecionado][2]++;
         }
         
         if (stackPointer > 0 && tabela[processoSelecionado][1] == 0){
@@ -110,6 +125,7 @@ int main() {
     }
 
     
+    printaProcessos(maxProcessos, tabela);
 
     //tempo medio de espera aqui
     
