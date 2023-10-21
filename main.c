@@ -4,6 +4,13 @@
 #include <stdbool.h>
 
 
+
+/*
+Printa os processos de 'int tabela[20][3]'.
+
+'int maxProcessos' é a quantidade obtida após leitura na main();
+'bool finalizado' é utilizado caso esteja na etapa final do programa.
+*/
 void printaProcessos(int maxProcessos, int tabela[20][3], bool finalizado){
     if (finalizado == false){
         printf("\n\t\t\tChegada\t\tTempo\n");
@@ -20,6 +27,14 @@ void printaProcessos(int maxProcessos, int tabela[20][3], bool finalizado){
 }
 
 
+
+
+/*
+Organiza a tabela 'int tabela[20][3]' em relação ao tempo de CHEGADA.
+Tempo de chegada = tabela[processo][0] <-- zero
+
+Olhar documentação para tabela.
+*/
 void simpleMergeSort(int tabela[20][3]){
     int aux[20][3];
     memcpy(aux, tabela, 20*3*sizeof(int));
@@ -37,21 +52,32 @@ void simpleMergeSort(int tabela[20][3]){
 
 
 int main() {
+    //cria link para o arquivo criando tipo FILE
+    //
     const char *nomeArquivo = "teste.csv";
     FILE *arquivo = fopen(nomeArquivo, "r");
-    
+    //
+
+    //erro caso tenha erro abrindo arquivo
     if (arquivo == NULL) {
         printf("Não foi possível abrir o arquivo %s\n", nomeArquivo);
         return 1;
     }
     
     //inicia variaveis
+    //
     char linha[256]; 
     char *token;
     int maxProcessos = 0;
+    //
+
+    /*
+    [i] [] : processo
+    [] [1]: tempo
+    [] [0]: chegada
+    [] [2]: tempo de finalização
+    */
     int tabela[20][3];
-
-
 
     // Lê cada linha do arquivo CSV
     for (int i = 0; fgets(linha, sizeof(linha), arquivo) != NULL; i++) {
@@ -86,12 +112,13 @@ int main() {
     //organiza tabela
     simpleMergeSort(tabela);
 
+    //printa novamente após organizar com a função acima
     printf("\nTabela organizada:");
     printaProcessos(maxProcessos, tabela, false);
 
     //temp
     return(0);
-
+    //apagar depois
 
 
 
@@ -102,17 +129,19 @@ int main() {
         tempoMax += tabela[i][1];
     }
 
+    //mostra quanto tempo foi obtido acima
     printf("\nTempo total: %is\n\n", tempoMax);
 
 
 
 
 
-
-
+    //inicializa os ponteiros de stack de processos ainda não terminados (PREEMPTIVO)
+    //
     int stackProcesso[2000];
     int stackPointer = 0;
     stackProcesso[0] = -1;
+    //
 
     printf("stack proceso: %i\ntabela[0][0]: %i, tabela[0][1]: %i\n\n", stackProcesso[0], tabela[0][0], tabela[0][1]);
     //seleciona primeiro processo
@@ -159,12 +188,19 @@ int main() {
             processoSelecionado++;
         }
 
-
+        //tabulação para completar a formatação de print
         printf("\n");
     }
 
-    
+    //mostra processos após calcular o tempo final
     printaProcessos(maxProcessos, tabela, true);
+
+
+
+
+
+
+
 
     //tempo medio de espera aqui
     
