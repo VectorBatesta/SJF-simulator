@@ -1,14 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+
+
+void simpleMergeSort(int tabela[20][3]){
+    //TODO
+}
 
 
 
-
-void printaProcessos(int maxProcessos, int tabela[20][3]){
-    printf("\n\n\t\t\tChegada\t\tTempo\t\tT. de Finalizacao\n");
-    for(int i = 0; i < maxProcessos; i++){
-        printf("Processo %i:\t\t%i\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1], tabela[i][2]);
+void printaProcessos(int maxProcessos, int tabela[20][3], bool finalizado){
+    if (finalizado == false){
+        printf("\n\n\t\t\tChegada\t\tTempo\n");
+        for(int i = 0; i < maxProcessos; i++){
+            printf("Processo %i:\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1]);
+        }
+    }
+    else{
+        printf("\n\n\t\t\tChegada\t\tTempo\t\tT. de Finalizacao\n");
+        for(int i = 0; i < maxProcessos; i++){
+            printf("Processo %i:\t\t%i\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1], tabela[i][2]);
+        }
     }
 }
 
@@ -59,9 +72,18 @@ int main() {
 
 
     //printa os processos, tempos e chegadas
-    printaProcessos(maxProcessos, tabela);
+    printf("\nTabela nao organizada:\n");
+    printaProcessos(maxProcessos, tabela, false);
 
-    //define quanto de tempo passar para calcular os processos
+    //organiza tabela
+    simpleMergeSort(tabela);
+
+
+
+
+
+
+    //define quanto de tempo máximo para calcular os processos
     int tempoMax = 0;
     for (int i = 0; i < maxProcessos; i++){
         tempoMax += tabela[i][1];
@@ -69,15 +91,17 @@ int main() {
 
     printf("\nTempo total: %is\n\n", tempoMax);
 
+
+
+
+
+
+
     int stackProcesso[2000];
     int stackPointer = 0;
     stackProcesso[0] = -1;
 
     printf("stack proceso: %i\ntabela[0][0]: %i, tabela[0][1]: %i\n\n", stackProcesso[0], tabela[0][0], tabela[0][1]);
-
-    //char buf;
-    //scanf("%c", &buf);
-
     //seleciona primeiro processo
     int processoSelecionado = 0;
     //percorre tabela começando do tempo zero até o tempo máximo (soma de todos os tempos)
@@ -125,7 +149,7 @@ int main() {
     }
 
     
-    printaProcessos(maxProcessos, tabela);
+    printaProcessos(maxProcessos, tabela, true);
 
     //tempo medio de espera aqui
     
