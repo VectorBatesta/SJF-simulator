@@ -4,21 +4,15 @@
 #include <stdbool.h>
 
 
-void simpleMergeSort(int tabela[20][3]){
-    //TODO
-}
-
-
-
 void printaProcessos(int maxProcessos, int tabela[20][3], bool finalizado){
     if (finalizado == false){
-        printf("\n\n\t\t\tChegada\t\tTempo\n");
+        printf("\n\t\t\tChegada\t\tTempo\n");
         for(int i = 0; i < maxProcessos; i++){
             printf("Processo %i:\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1]);
         }
     }
     else{
-        printf("\n\n\t\t\tChegada\t\tTempo\t\tT. de Finalizacao\n");
+        printf("\n\t\t\tChegada\t\tTempo\t\tT. de Finalizacao\n");
         for(int i = 0; i < maxProcessos; i++){
             printf("Processo %i:\t\t%i\t\t%i\t\t%i\n", i, tabela[i][0], tabela[i][1], tabela[i][2]);
         }
@@ -26,12 +20,26 @@ void printaProcessos(int maxProcessos, int tabela[20][3], bool finalizado){
 }
 
 
+void simpleMergeSort(int tabela[20][3]){
+    int aux[20][3];
+    memcpy(aux, tabela, 20*3*sizeof(int));
+    
+    //todo
+    perror("\nsimplemergesort nao criado ainda");
+    exit(EXIT_FAILURE);
+
+    memcpy(tabela, aux, 20*3*sizeof(int));
+}
+
+
+
+
 
 
 int main() {
     const char *nomeArquivo = "teste.csv";
     FILE *arquivo = fopen(nomeArquivo, "r");
-   
+    
     if (arquivo == NULL) {
         printf("Não foi possível abrir o arquivo %s\n", nomeArquivo);
         return 1;
@@ -72,12 +80,17 @@ int main() {
 
 
     //printa os processos, tempos e chegadas
-    printf("\nTabela nao organizada:\n");
+    printf("\nTabela nao organizada:");
     printaProcessos(maxProcessos, tabela, false);
 
     //organiza tabela
     simpleMergeSort(tabela);
 
+    printf("\nTabela organizada:");
+    printaProcessos(maxProcessos, tabela, false);
+
+    //temp
+    return(0);
 
 
 
@@ -108,7 +121,7 @@ int main() {
     for(int tempoAtual = 0; tempoAtual < tempoMax; tempoAtual++){
         //tempo de finalizaçao++ para cada processo iniciado e com tempo maior q zero
         for (int j = 1; j <= stackPointer; j++){
-            tabela[j][2]++;
+            tabela[stackProcesso[j]][2]++;
         }
 
         //imprime stack
@@ -120,12 +133,14 @@ int main() {
         //printa tempo atual
         printf("\t\t[tempo:%i]", tempoAtual);
 
+        //faz modificações no processo selecionado (tempo-- e tempo de finalizaçao++)
         if (tabela[processoSelecionado][1] > 0){
             printf("%i ", processoSelecionado);
             tabela[processoSelecionado][1]--;
             tabela[processoSelecionado][2]++;
         }
         
+        //pega processo do stack caso acabe o tempo do selecionado E tenha processo no stack
         if (stackPointer > 0 && tabela[processoSelecionado][1] == 0){
             processoSelecionado = stackProcesso[stackPointer];
             stackPointer--;
