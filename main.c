@@ -13,6 +13,7 @@ typedef struct{
     int tempo;
     int chegada;
     int tempoFinalizacao;
+    int tempoEspera;
 }tipoProcesso;
 
 
@@ -49,13 +50,22 @@ Tempo de chegada = processo[id].chegada
 
 Olhar documentação para tipoProcesso.
 */
-void simpleMergeSort(tipoProcesso processo[20]){
-    tipoProcesso aux[20];
-    memcpy(aux, processo, 20*sizeof(tipoProcesso));
-    
-    //todo
-    
-    memcpy(processo, aux, 20*sizeof(tipoProcesso));
+void simpleBubbleSort(tipoProcesso processo[20], int maxProcessos){
+    tipoProcesso aux;
+    int n_modificacoes = 0;
+
+    for (int k = 1; k < maxProcessos; k++) {
+        for (int j = 0; j < maxProcessos - 1; j++) {
+            if (processo[j].chegada > processo[j + 1].chegada) {
+                aux             = processo[j];
+                processo[j]     = processo[j + 1];
+                processo[j + 1] = aux;
+                n_modificacoes++;
+            }
+        }
+    }
+
+    printf("\nProcessos organizados, modificacoes feitas: %i\n", n_modificacoes);
 }
 
 
@@ -96,10 +106,10 @@ int main() {
     }
 
 
-
-    //inicializa tempo de finalização em zero
+    //inicializa valores dentro do vetor de structs
     for (int i = 0; i < maxProcessos; i++){
         processo[i].tempoFinalizacao = 0;
+        processo[i].tempoEspera = 0;
     }
 
 
@@ -110,15 +120,13 @@ int main() {
     printaProcessos(maxProcessos, processo, false);
 
     //organiza tabela
-    simpleMergeSort(processo);
+    simpleBubbleSort(processo, maxProcessos);
 
     //printa novamente após organizar com a função acima
     printf("\nTabela organizada:");
     printaProcessos(maxProcessos, processo, false);
 
-    //temp
-    return(0);
-    //apagar depois
+
 
 
 
@@ -153,7 +161,10 @@ int main() {
     for(int tempoAtual = 0; tempoAtual < tempoMax; tempoAtual++){
         //tempo de finalizaçao++ para cada processo iniciado e com tempo maior q zero
         for (int j = 1; j <= stackPointer; j++){
+            //processo já iniciado, portanto ele ainda não terminou
             processo[stackProcesso[j]].tempoFinalizacao++;
+            //processo esperando ser computado, portanto tempo de espera sobe
+            processo[stackProcesso[j]].tempoEspera++;
         }
 
         //imprime stack
@@ -167,9 +178,13 @@ int main() {
 
         //faz modificações no processo selecionado (tempo-- e tempo de finalizaçao++)
         if (processo[processoSelecionado].tempo > 0){
-            printf("%i ", processoSelecionado);
+            printf(" %i", processoSelecionado);
             processo[processoSelecionado].tempo--;
             processo[processoSelecionado].tempoFinalizacao++;
+        }
+        else if (stackPointer == 0 && processo[processoSelecionado].tempo == 0){
+            //caso nao tenha processo sendo rodado
+            printf(" idle");
         }
         
         //pega processo do stack caso acabe o tempo do selecionado E tenha processo no stack
@@ -202,12 +217,26 @@ int main() {
 
 
 
+    printf("\n\n||||||||||||||||||||||||||||||\n\nCalculando tempos medios...\n");
+
+    //tempo medio de resposta
+    int tempoResposta_total = 0;
+    for (int i = 0; i < maxProcessos; i++){
+        printf("\nTempo resposta de processo[%i]: %i", i, processo[i].tempoFinalizacao);
+        tempoResposta_total += processo[i].tempoFinalizacao;
+    }
+    float tempoResposta_medio = tempoResposta_total / maxProcessos;
+    printf("\nTempo medio de resposta dos processos: %.2f t.u.\n", tempoResposta_medio);
 
 
     //tempo medio de espera aqui
-    
-    //tempo medio de resposta aqui
-
+    int tempoEspera_total = 0;
+    for (int i = 0; i < maxProcessos; i++){
+        printf("\nTempo espera de processo[%i]: %i", i, processo[i].tempoEspera);
+        tempoEspera_total += processo[i].tempoEspera;
+    }
+    float tempoEspera_medio = tempoEspera_total / maxProcessos;
+    printf("\nTempo medio de espera dos processos: %.2f t.u.\n", tempoEspera_medio);
 
 
     fclose(arquivo);
