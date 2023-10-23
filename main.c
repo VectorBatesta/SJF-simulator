@@ -220,7 +220,7 @@ int main() {
     printf("\n\n||||||||||||||||||||||||||||||\n\nCalculando tempos medios...\n");
 
     //tempo medio de resposta
-    int tempoResposta_total = 0;
+    float tempoResposta_total = 0;
     for (int i = 0; i < maxProcessos; i++){
         printf("\nTempo resposta de processo[%i]: %i", i, processo[i].tempoFinalizacao);
         tempoResposta_total += processo[i].tempoFinalizacao;
@@ -230,7 +230,7 @@ int main() {
 
 
     //tempo medio de espera aqui
-    int tempoEspera_total = 0;
+    float tempoEspera_total = 0;
     for (int i = 0; i < maxProcessos; i++){
         printf("\nTempo espera de processo[%i]: %i", i, processo[i].tempoEspera);
         tempoEspera_total += processo[i].tempoEspera;
