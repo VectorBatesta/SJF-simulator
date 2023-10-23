@@ -4,6 +4,31 @@
 #include <stdbool.h>
 
 
+
+
+
+
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+//
+//
+// DETALHE: q = 1
+//
+//
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+/////////////////////////////////////////////////
+
+
+
+
+
+
+
+
 /*
 tempo: quantidade de tempo que o processo precisa utilizar para ser terminado
 chegada: quando o processo irá chegar, interrompe o anterior pois o programa é PREEMPTIVO
@@ -140,90 +165,78 @@ int main() {
     //mostra quanto tempo foi obtido acima
     printf("\nTempo total: %is\n\n", tempoMax);
 
-    //linhadotempo
-    int *linhaDoTempo = (int *) malloc(tempoMax * sizeof(int));
 
 
-    // //inicializa os ponteiros de stack de processos ainda não terminados (PREEMPTIVO)
-    // //
-    // int stackProcesso[2000];
-    // int stackPointer = 0;
-    // stackProcesso[0] = -1;
-    // //
 
-    //inicializa os ponteiros de array de processos abaixo do tempomax (PREEMPTIVO)
+
+    //inicializa os ponteiros de stack de processos ainda não terminados (PREEMPTIVO)
     //
-    int arrayProcesso[2000];
-    int arrayPointer = 0;
+    int stackProcesso[2000];
+    int stackPointer = 0;
+    stackProcesso[0] = -1;
     //
 
-    //cria variaveis para usar no percorrimento
-    int processoMenorTempo = -1;
-    int quantProcessosSelecionados = -1;
-    int quantProcessosSelecionados_anterior = -1;
+    printf("stack proceso: %i\nprocesso[0].chegada: %i, processo[0].tempo: %i\n\n",
+            stackProcesso[0], processo[0].chegada, processo[0].tempo);
+    //seleciona primeiro processo
+    int processoSelecionado = 0;
+
 
     //percorre tabela começando do tempo zero até o tempo máximo (soma de todos os tempos)
     for(int tempoAtual = 0; tempoAtual < tempoMax; tempoAtual++){
-        //'reseta' array
-        arrayPointer = 0;
+        //tempo de finalizaçao++ para cada processo iniciado e com tempo maior q zero
+        for (int j = 1; j <= stackPointer; j++){
+            //processo já iniciado, portanto ele ainda não terminou
+            processo[stackProcesso[j]].tempoFinalizacao++;
+            //processo esperando ser computado, portanto tempo de espera sobe
+            processo[stackProcesso[j]].tempoEspera++;
+        }
 
+        //imprime stack
+        printf("stack: ");
+        for(int i = 0; i <= stackPointer; i++){
+            printf("%i, ", stackProcesso[i]);
+        }
 
-        //seleciona todos processos abaixo do tempoAtual
-        quantProcessosSelecionados = 0;
-        for(int i = 0; i < maxProcessos; i++){
-            if (processo[i].chegada <= tempoAtual){
-                arrayProcesso[arrayPointer] = i;
-                arrayPointer++;
-                quantProcessosSelecionados++;
+        //printa tempo atual
+        printf("\t\t[tempo:%i]", tempoAtual);
 
-                //caso processo abaixo do tempo atual ainda não terminou, acrescenta tempo de finalização
-                if (processo[i].tempo > 0){
-                    processo[i].tempoFinalizacao++;
-                }
+        //faz modificações no processo selecionado (tempo-- e tempo de finalizaçao++)
+        if (processo[processoSelecionado].tempo > 0){
+            printf(" %i", processoSelecionado);
+            processo[processoSelecionado].tempo--;
+            processo[processoSelecionado].tempoFinalizacao++;
+        }
+        else if (stackPointer == 0 && processo[processoSelecionado].tempo == 0){
+            //caso nao tenha processo sendo rodado
+            printf(" idle");
+        }
+        
+        //pega processo do stack caso acabe o tempo do selecionado E tenha processo no stack
+        if (stackPointer > 0 && processo[processoSelecionado].tempo == 0){
+            processoSelecionado = stackProcesso[stackPointer];
+            stackPointer--;
+        }
+
+        //detecta se prox processo irá interromper o anterior
+        if (tempoAtual + 1 == processo[processoSelecionado + 1].chegada && processo[processoSelecionado + 1].tempo > 0){
+            //detecta se o processo atual ainda tem tempo para ser processado e ser colocado na stack
+            if (processo[processoSelecionado].tempo > 0){
+                stackPointer++;
+                stackProcesso[stackPointer] = processoSelecionado;
             }
+
+            //seleciona o prox processo já que ele interrompe o anterior
+            processoSelecionado++;
         }
 
-
-        //detecta caso tenha aumentado o número de processos abaixo do tempo atual
-        if (quantProcessosSelecionados != quantProcessosSelecionados_anterior){
-            //reseta processo selecionado
-            processoMenorTempo = -1;
-            int tempoMinimo = 99999;
-
-            //descobre menor tempo dos processos selecionados
-            for(int i = 0; i < arrayPointer; i++){ //detalhe: for() é skipado caso esteja vazio
-                int aux = arrayProcesso[i];
-
-                if (processo[aux].tempo < tempoMinimo && processo[aux].tempo > 0){
-                    tempoMinimo = processo[aux].tempo;
-                    processoMenorTempo = aux;
-                }
-            }
-        }
-
-        //tempo de espera: todo processo não nulo q não seja o processo de menor tempo aumenta tempo de espera
-        for(int i = 0; i < maxProcessos; i++){
-            if (processo[i].chegada <= tempoAtual){
-                if (processo[i].tempo > 0 && i != processoMenorTempo){
-                    processo[i].tempoEspera++;
-                }
-            }
-        }
-
-        //mostra processo em execução
-        printf("[tempo:%i] ", tempoAtual);
-        if (arrayPointer == 0){ //caso não haja processo executando
-            printf("idle");
-        }
-        else{ //caso haja
-            printf("%i", processoMenorTempo);
-            processo[processoMenorTempo].tempo--;
-        }
-        printf("\n"); //identação
+        //tabulação para completar a formatação de print
+        printf("\n");
     }
 
     //mostra processos após calcular o tempo final
     printaProcessos(maxProcessos, processo, true);
+
 
 
 
