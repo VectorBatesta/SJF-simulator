@@ -1,6 +1,6 @@
-# SJF Approximation
+# SJF Simulator
 
-This project processes a list of processes fetched from a .csv file and "simulates" the algorithm called "SJF Approximation".
+This project processes a list of processes fetched from a .csv file and "simulates" the algorithm called "Preemptive SJF".
 
 - Processes are of type "tipoProcesso" and allocated into a fixed array "processo" of that type.
 - This type is a struct that has important data about said processes, whom have time of processing required, time of arrival, etc (named accordingly in portuguese).
